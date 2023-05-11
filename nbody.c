@@ -6,6 +6,7 @@
 #include "config.h"
 #include "planets.h"
 #include "compute.h"
+#include <openacc.h>
 
 // represents the objects in the system.  Global variables
 vector3 *hVel, *d_hVel;
@@ -42,7 +43,9 @@ void freeHostMemory()
 void planetFill(){
 	int i,j;
 	double data[][7]={SUN,MERCURY,VENUS,EARTH,MARS,JUPITER,SATURN,URANUS,NEPTUNE};
+	#pragma acc parallel loop
 	for (i=0;i<=NUMPLANETS;i++){
+		#pragma acc parallel loop
 		for (j=0;j<3;j++){
 			hPos[i][j]=data[i][j];
 			hVel[i][j]=data[i][j+3];
@@ -76,12 +79,15 @@ void randomFill(int start, int count)
 //Side Effects: Modifies the file handle by writing to it.
 void printSystem(FILE* handle){
 	int i,j;
+	#pragma acc parallel loop
 	for (i=0;i<NUMENTITIES;i++){
 		fprintf(handle,"pos=(");
+		#pragma acc parallel loop
 		for (j=0;j<3;j++){
 			fprintf(handle,"%lf,",hPos[i][j]);
 		}
 		printf("),v=(");
+		#pragma acc parallel loop
 		for (j=0;j<3;j++){
 			fprintf(handle,"%lf,",hVel[i][j]);
 		}
