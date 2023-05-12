@@ -67,9 +67,9 @@ void compute()
     cudaMalloc(&dev_sum,sizeof(vector3) * NUMENTITIES);
     cudaMalloc(&dev_mass,sizeof(double) * NUMENTITIES);
     cudaMemcpy(dev_mass,mass,sizeof(double) * NUMENTITIES,cudaMemcpyHostToDevice);
-    Parallel_Computation<<<gridDim, blockDim>>>(dev_hPos, dev_acc, dev_mass);
+    parallel_compute<<<gridDim, blockDim>>>(dev_hPos, dev_acc, dev_mass);
     cudaDeviceSynchronize();
-    Parallel_Sum<<<gridDim.x, blockDim.x>>>(dev_acc, dev_sum, dev_hPos, dev_hVel);
+    parallel_sum<<<gridDim.x, blockDim.x>>>(dev_acc, dev_sum, dev_hPos, dev_hVel);
     cudaDeviceSynchronize();
     cudaMemcpy(hPos,dev_hPos,sizeof(vector3) * NUMENTITIES,cudaMemcpyDeviceToHost);
     cudaMemcpy(hVel,dev_hVel,sizeof(vector3) * NUMENTITIES,cudaMemcpyDeviceToHost);
